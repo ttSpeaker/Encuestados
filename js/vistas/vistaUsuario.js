@@ -64,7 +64,7 @@ VistaUsuario.prototype = {
       //agregar a listaPreguntas un elemento div con valor "clave.textoPregunta", texto "clave.textoPregunta", id "clave.id"
       listaPreguntas.append(
         $(document.createElement("div"))
-          .attr({ texto: clave.textoPregunta, id: clave.id })
+          .attr({ value: clave.textoPregunta, id: clave.id })
           .html(clave.textoPregunta)
       );
       var respuestas = clave.cantidadPorRespuesta;
@@ -93,7 +93,6 @@ VistaUsuario.prototype = {
 
   agregarVotos: function() {
     var contexto = this;
-    console.log($("#preguntas").find("div"));
     $("#preguntas")
       .find("div")
       .each(function() {
@@ -101,9 +100,8 @@ VistaUsuario.prototype = {
         var id = $(this).attr("id");
         var respuestaSeleccionada = $("input[name=" + id + "]:checked").val();
         $("input[name=" + id + "]").prop("checked", false);
-        contexto.controlador.agregarVoto(id, respuestaSeleccionada);
+        contexto.controlador.agregarVoto(nombrePregunta, respuestaSeleccionada);
       });
-      
   },
 
   dibujarGrafico: function(nombre, respuestas) {
@@ -144,3 +142,36 @@ VistaUsuario.prototype = {
     }
   }
 };
+
+// dibujarGrafico: function(nombre, respuestas){
+//   var seVotoAlgunaVez = false;
+//   for(var i=1;i<respuestas.length;++i){
+//     if(respuestas[i][1]>0){
+//       seVotoAlgunaVez = true;
+//     }
+//   }
+//   var contexto = this;
+//   google.charts.load("current", {packages:["corechart"]});
+//   google.charts.setOnLoadCallback(drawChart);
+//   function drawChart() {
+//     var data = google.visualization.arrayToDataTable(respuestas);
+
+//     var options = {
+//       title: nombre,
+//       is3D: true,
+//     };
+//     var ubicacionGraficos = contexto.elementos.graficosDeTorta;
+//     var id = (nombre.replace(/\W/g, '')).split(' ').join('')+'_grafico';
+//     if($('#'+id).length){$('#'+id).remove()}
+//     var div = document.createElement('div');
+//     ubicacionGraficos.append(div);
+//     div.id = id;
+//     div.style.width = '400';
+//     div.style.height = '300px';
+//     var chart = new google.visualization.PieChart(div);
+//     if(seVotoAlgunaVez){
+//       chart.draw(data, options);
+//     }
+//   }
+// },
+// };

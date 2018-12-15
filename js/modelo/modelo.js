@@ -56,10 +56,10 @@ Modelo.prototype = {
     this.guardar();
     this.preguntaRemovida.notificar();
   },
-  sumarVoto: function(id, respuesta) {
+  sumarVoto: function(nombrePregunta, respuesta) {
     var indiceSumar;
     this.preguntas.forEach(function(pregunta, index) {
-      if (pregunta.id == id) {
+      if (pregunta.textoPregunta == nombrePregunta) {
         indiceSumar = index;
       }
     });
