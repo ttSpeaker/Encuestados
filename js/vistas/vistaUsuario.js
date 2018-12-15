@@ -104,74 +104,36 @@ VistaUsuario.prototype = {
       });
   },
 
-  dibujarGrafico: function(nombre, respuestas) {
-    var seVotoAlgunaVez = false;
-    for (var i = 1; i < respuestas.length; ++i) {
-      if (respuestas[i][1] > 0) {
-        seVotoAlgunaVez = true;
-      }
-    }
-    var contexto = this;
-    google.charts.load("current", { packages: ["corechart"] });
-    google.charts.setOnLoadCallback(drawChart);
-    function drawChart() {
-      var data = google.visualization.arrayToDataTable(respuestas);
 
-      var options = {
-        title: nombre,
-        is3D: true
-      };
-      var ubicacionGraficos = contexto.elementos.graficosDeTorta;
-      var id =
-        nombre
-          .replace(/\W/g, "")
-          .split(" ")
-          .join("") + "_grafico";
-      if ($("#" + id).length) {
-        $("#" + id).remove();
-      }
-      var div = document.createElement("div");
-      ubicacionGraficos.append(div);
-      div.id = id;
-      div.style.width = "400";
-      div.style.height = "300px";
-      var chart = new google.visualization.PieChart(div);
-      if (seVotoAlgunaVez) {
-        chart.draw(data, options);
-      }
+dibujarGrafico: function(nombre, respuestas){
+  var seVotoAlgunaVez = false;
+  for(var i=1;i<respuestas.length;++i){
+    if(respuestas[i][1]>0){
+      seVotoAlgunaVez = true;
     }
   }
+  var contexto = this;
+  google.charts.load("current", {packages:["corechart"]});
+  google.charts.setOnLoadCallback(drawChart);
+  function drawChart() {
+    var data = google.visualization.arrayToDataTable(respuestas);
+
+    var options = {
+      title: nombre,
+      is3D: true,
+    };
+    var ubicacionGraficos = contexto.elementos.graficosDeTorta;
+    var id = (nombre.replace(/\W/g, '')).split(' ').join('')+'_grafico';
+    if($('#'+id).length){$('#'+id).remove()}
+    var div = document.createElement('div');
+    ubicacionGraficos.append(div);
+    div.id = id;
+    div.style.width = '400';
+    div.style.height = '300px';
+    var chart = new google.visualization.PieChart(div);
+    if(seVotoAlgunaVez){
+      chart.draw(data, options);
+    }
+  }
+},
 };
-
-// dibujarGrafico: function(nombre, respuestas){
-//   var seVotoAlgunaVez = false;
-//   for(var i=1;i<respuestas.length;++i){
-//     if(respuestas[i][1]>0){
-//       seVotoAlgunaVez = true;
-//     }
-//   }
-//   var contexto = this;
-//   google.charts.load("current", {packages:["corechart"]});
-//   google.charts.setOnLoadCallback(drawChart);
-//   function drawChart() {
-//     var data = google.visualization.arrayToDataTable(respuestas);
-
-//     var options = {
-//       title: nombre,
-//       is3D: true,
-//     };
-//     var ubicacionGraficos = contexto.elementos.graficosDeTorta;
-//     var id = (nombre.replace(/\W/g, '')).split(' ').join('')+'_grafico';
-//     if($('#'+id).length){$('#'+id).remove()}
-//     var div = document.createElement('div');
-//     ubicacionGraficos.append(div);
-//     div.id = id;
-//     div.style.width = '400';
-//     div.style.height = '300px';
-//     var chart = new google.visualization.PieChart(div);
-//     if(seVotoAlgunaVez){
-//       chart.draw(data, options);
-//     }
-//   }
-// },
-// };
