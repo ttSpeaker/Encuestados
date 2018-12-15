@@ -11,6 +11,18 @@ var VistaUsuario = function(modelo, controlador, elementos) {
   this.modelo.preguntaAgregada.suscribir(function() {
     contexto.reconstruirLista();
   });
+  this.modelo.votoSumado.suscribir(function() {
+    contexto.reconstruirGrafico();
+  });
+  this.modelo.preguntaRemovida.suscribir(function() {
+    contexto.reconstruirLista();
+  });
+  this.modelo.preguntaEditada.suscribir(function() {
+    contexto.reconstruirLista();
+  });
+  this.modelo.preguntasRemovidas.suscribir(function() {
+    contexto.reconstruirLista();
+  });
 };
 
 VistaUsuario.prototype = {
@@ -19,98 +31,116 @@ VistaUsuario.prototype = {
     this.reconstruirLista();
     var elementos = this.elementos;
     var contexto = this;
-    
+
     elementos.botonAgregar.click(function() {
-      contexto.agregarVotos(); 
+      contexto.agregarVotos();
     });
-      
+
     this.reconstruirGrafico();
   },
 
   //reconstruccion de los graficos de torta
-  reconstruirGrafico: function(){
+  reconstruirGrafico: function() {
     var contexto = this;
     //obtiene las preguntas del local storage
     var preguntas = this.modelo.preguntas;
-    preguntas.forEach(function(clave){
-      var listaParaGrafico = [[clave.textoPregunta, 'Cantidad']];
+    preguntas.forEach(function(clave) {
+      var listaParaGrafico = [[clave.textoPregunta, "Cantidad"]];
       var respuestas = clave.cantidadPorRespuesta;
-      respuestas.forEach (function(elemento) {
-        listaParaGrafico.push([elemento.textoRespuesta,elemento.cantidad]);
+      respuestas.forEach(function(elemento) {
+        listaParaGrafico.push([elemento.textoRespuesta, elemento.cantidad]);
       });
       contexto.dibujarGrafico(clave.textoPregunta, listaParaGrafico);
-    })
-  },
-
-
-  reconstruirLista: function() {
-    var listaPreguntas = this.elementos.listaPreguntas;
-    listaPreguntas.html('');
-    var contexto = this;
-    var preguntas = this.modelo.preguntas;
-    preguntas.forEach(function(clave){
-      //completar
-      //agregar a listaPreguntas un elemento div con valor "clave.textoPregunta", texto "clave.textoPregunta", id "clave.id"
-      var respuestas = clave.cantidadPorRespuesta;
-      contexto.mostrarRespuestas(listaPreguntas,respuestas, clave);
-    })
-  },
-
-  //muestra respuestas
-  mostrarRespuestas:function(listaPreguntas,respuestas, clave){
-    respuestas.forEach (function(elemento) {
-      listaPreguntas.append($('<input>', {
-        type: 'radio',
-        value: elemento.textoRespuesta,
-        name: clave.id,
-      }));
-      listaPreguntas.append($("<label>", {
-        for: elemento.textoRespuesta,
-        text: elemento.textoRespuesta
-      }));
     });
   },
 
-  agregarVotos: function(){
+  reconstruirLista: function() {
+    var listaPreguntas = this.elementos.listaPreguntas;
+    listaPreguntas.html("");
     var contexto = this;
-    $('#preguntas').find('div').each(function(){
-        var nombrePregunta = $(this).attr('value');
-        var id = $(this).attr('id');
-        var respuestaSeleccionada = $('input[name=' + id + ']:checked').val();
-        $('input[name=' + id + ']').prop('checked',false);
-        contexto.controlador.agregarVoto(nombrePregunta,respuestaSeleccionada);
-      });
+    var preguntas = this.modelo.preguntas;
+    preguntas.forEach(function(clave) {
+      //completar
+      //agregar a listaPreguntas un elemento div con valor "clave.textoPregunta", texto "clave.textoPregunta", id "clave.id"
+      listaPreguntas.append(
+        $(document.createElement("div"))
+          .attr({ texto: clave.textoPregunta, id: clave.id })
+          .html(clave.textoPregunta)
+      );
+      var respuestas = clave.cantidadPorRespuesta;
+      contexto.mostrarRespuestas(listaPreguntas, respuestas, clave);
+    });
   },
 
-  dibujarGrafico: function(nombre, respuestas){
+  //muestra respuestas
+  mostrarRespuestas: function(listaPreguntas, respuestas, clave) {
+    respuestas.forEach(function(elemento) {
+      listaPreguntas.append(
+        $("<input>", {
+          type: "radio",
+          value: elemento.textoRespuesta,
+          name: clave.id
+        })
+      );
+      listaPreguntas.append(
+        $("<label>", {
+          for: elemento.textoRespuesta,
+          text: elemento.textoRespuesta
+        })
+      );
+    });
+  },
+
+  agregarVotos: function() {
+    var contexto = this;
+    console.log($("#preguntas").find("div"));
+    $("#preguntas")
+      .find("div")
+      .each(function() {
+        var nombrePregunta = $(this).attr("value");
+        var id = $(this).attr("id");
+        var respuestaSeleccionada = $("input[name=" + id + "]:checked").val();
+        $("input[name=" + id + "]").prop("checked", false);
+        contexto.controlador.agregarVoto(id, respuestaSeleccionada);
+      });
+      
+  },
+
+  dibujarGrafico: function(nombre, respuestas) {
     var seVotoAlgunaVez = false;
-    for(var i=1;i<respuestas.length;++i){
-      if(respuestas[i][1]>0){
+    for (var i = 1; i < respuestas.length; ++i) {
+      if (respuestas[i][1] > 0) {
         seVotoAlgunaVez = true;
       }
     }
     var contexto = this;
-    google.charts.load("current", {packages:["corechart"]});
+    google.charts.load("current", { packages: ["corechart"] });
     google.charts.setOnLoadCallback(drawChart);
     function drawChart() {
       var data = google.visualization.arrayToDataTable(respuestas);
 
       var options = {
         title: nombre,
-        is3D: true,
+        is3D: true
       };
       var ubicacionGraficos = contexto.elementos.graficosDeTorta;
-      var id = (nombre.replace(/\W/g, '')).split(' ').join('')+'_grafico';
-      if($('#'+id).length){$('#'+id).remove()}
-      var div = document.createElement('div');
+      var id =
+        nombre
+          .replace(/\W/g, "")
+          .split(" ")
+          .join("") + "_grafico";
+      if ($("#" + id).length) {
+        $("#" + id).remove();
+      }
+      var div = document.createElement("div");
       ubicacionGraficos.append(div);
       div.id = id;
-      div.style.width = '400';
-      div.style.height = '300px';
+      div.style.width = "400";
+      div.style.height = "300px";
       var chart = new google.visualization.PieChart(div);
-      if(seVotoAlgunaVez){
+      if (seVotoAlgunaVez) {
         chart.draw(data, options);
       }
     }
-  },
+  }
 };
