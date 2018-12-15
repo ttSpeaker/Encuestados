@@ -7,6 +7,7 @@ var Modelo = function() {
 
   //inicializacion de eventos
   this.preguntaAgregada = new Evento(this);
+  this.preguntaRemovida = new Evento(this);
 };
 
 Modelo.prototype = {
@@ -35,7 +36,16 @@ Modelo.prototype = {
     this.guardar();
     this.preguntaAgregada.notificar();
   },
-
+  removerPregunta: function(id) {
+    var indexRemove;
+    this.preguntas.forEach(function(pregunta, index) {
+      if (pregunta.id == id) {
+        indexRemove = index;
+      }
+    });
+    this.preguntas.splice(indexRemove, 1);
+    this.preguntaRemovida.notificar();
+  },
   //se guardan las preguntas
   guardar: function() {}
 };
