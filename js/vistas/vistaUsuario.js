@@ -48,7 +48,7 @@ VistaUsuario.prototype = {
       var listaParaGrafico = [[clave.textoPregunta, "Cantidad"]];
       var respuestas = clave.cantidadPorRespuesta;
       respuestas.forEach(function(elemento) {
-        listaParaGrafico.push([elemento.textoRespuesta, elemento.cantidad]);
+        listaParaGrafico.push([elemento.textoRespuesta, elemento.cantidadPorRespuesta]);
       });
       contexto.dibujarGrafico(clave.textoPregunta, listaParaGrafico);
     });
