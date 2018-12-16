@@ -20,8 +20,9 @@ Controlador.prototype = {
   removerTodas: function() {
     this.modelo.removerTodas();
   },
-  agregarVoto: function(id, respuestaSeleccionada) {
-    //if (typeof id == "number" && typeof respuestaSeleccionada == "string") {
-      modelo.sumarVoto(id,respuestaSeleccionada);
+  agregarVoto: function(nombrePregunta, respuestaSeleccionada) {
+    if (typeof nombrePregunta == "string" && typeof respuestaSeleccionada == "string") {
+      modelo.sumarVoto(nombrePregunta, respuestaSeleccionada);
+    }
   }
 };
